@@ -1,0 +1,64 @@
+# .important — key info for this repo
+
+## GitHub token (FILL THIS IN YOURSELF)
+
+```
+GITHUB_TOKEN=
+```
+
+> Blank on purpose: no PAT exists in the build environment — git auth there is
+> handled transparently by the host (askpass). To transfer to a new device:
+> paste a PAT above (fine-grained or classic, scope: repo), then either:
+>
+>     git remote set-url origin https://<TOKEN>@github.com/ywhshhs/luadeobf.git
+>
+> or keep the clean URL and use:
+>
+>     git config --global credential.helper store   # then push once, paste token
+>
+> Verify with: `git ls-remote origin` (must list refs/heads/main).
+
+## Repo
+
+- remote : https://github.com/ywhshhs/luadeobf.git (branch: main)
+- owner  : ywhshhs
+- what   : luadeob — versatile, profile-driven Luau/Lua deobfuscator (Python + lupa)
+
+## Layout
+
+```
+luadeob/            the framework (see luadeob/README.md for full docs)
+  core.py           Pass/Context/Report/Pipeline
+  fingerprints.py   obfuscator + technique detection (Luraph v15/v14, Clyde, ...)
+  rbxenv.py         FULL Roblox executor environment (offline)
+  sandbox.py        lupa sandbox, capture system, Luau->Lua5.5 compat, workers
+  worker.py         killable subprocess runner (deadline = hard kill)
+  profiles.py       12 builtin profiles + learn mode
+  luatokens.py      safe Lua lexer + string decode + luau_check
+  passes/           strings, fold, beautify, peel, xor, dispatch, rename, vm_static
+make_samples.py     generator for the 10 test samples (randomized keys each run)
+obf_samples/        level1.lua .. level10.lua (difficulty 1-10)
+STATUS.md           current task: what I'm working on / trying to fix
+docs/OBFUSCATION_METHODS.md   key notes on obfuscation methods (what we learnt)
+```
+
+## Quick commands
+
+    python3 -m luadeob script.lua --json            # agent mode (full JSON report)
+    python3 -m luadeob script.lua --profile luraph  # per-obfuscator tuning
+    python3 -m luadeob loader.lua --fetch -o out/   # real fetch + recursive peel
+    python3 -m luadeob script.lua --learn --learn-to profile.json
+    python3 make_samples.py            # regenerate all samples w/ fresh keys
+    python3 make_samples.py 6 7 8 9 10 # regenerate only levels 6-10
+
+## Environment facts (build machine)
+
+- Python 3.11.14, lupa 2.8 -> Lua 5.5 runtime (string.pack/unpack native)
+- NO standalone luajit/lua binaries; no luau-ast binary on Linux
+- lupa CANNOT iterate Lua tables inside Lua->Python callbacks (JSONEncode is pure Lua)
+- install: pip install lupa
+
+## Local secrets (NOT committed)
+
+- /home/runner/workspace/.env — OPENCODE_* API keys (sk-...), unrelated to git push
+- git auth on the build box: transparent askpass (no PAT on disk)
